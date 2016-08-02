@@ -7,6 +7,8 @@ public class Constant {
 
     public interface BundleExtra {
 String isDelayed="isDelayed";
+        String LATITUDE = "latitude";
+        String LONGITUDE = "longitude";
     }
 
     public interface IntentFlag {

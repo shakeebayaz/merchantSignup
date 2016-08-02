@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -41,7 +42,6 @@ public class SignUpActivity extends AppCompatActivity {
     private boolean isPrimarySelected;
     private String primaryEmail;
     private StoreInformationFragment mfragment;
-    private GPSTracker mGpsTracker;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private LocationTracker mLocationTracker;
@@ -50,21 +50,11 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        mGpsTracker = new GPSTracker(this);
         // startActivityForResult(new Intent(this, FindLocation.class), LOCATION_REQUEST);
-
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         checkPlayServices();
 
-      /*  if (mfragment == null && mGpsTracker.canGetLocation) {
-            addFragment(true);
-        }*/
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -78,9 +68,21 @@ public class SignUpActivity extends AppCompatActivity {
                 break;
             case Constant.IntentFlag.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode == Activity.RESULT_OK) {
-                    mLocationTracker = new LocationTracker(this);
-                    addFragment(false);
+                    mLocationRequest = new LocationRequest();
+                    LocationSettingsRequest.Builder locationSettingsRequestBuilder = new LocationSettingsRequest.Builder()
+                            .addLocationRequest(mLocationRequest);
+                    mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).build();
+                    mGoogleApiClient.connect();
+                    PendingResult<LocationSettingsResult> result =
+                            LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, locationSettingsRequestBuilder.build());
+                    result.setResultCallback(mResultCallbackFromSettings);
                 }
+                break;
+            case Constant.IntentFlag.REQUEST_CHECK_SETTINGS:
+                if (resultCode == Activity.RESULT_OK) {
+                    GPSTracker gpsTracker=new GPSTracker(this);
+                    addFragment(gpsTracker.getLatitude(),gpsTracker.getLongitude());
+                } else finish();
                 break;
         }
     }
@@ -139,22 +141,47 @@ public class SignUpActivity extends AppCompatActivity {
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();*/
         // Check the location settings of the user and create the callback to react to the different possibilities
-       /* mLocationRequest = new LocationRequest();
-        LocationSettingsRequest.Builder locationSettingsRequestBuilder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
-        mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).build();
-        mGoogleApiClient.connect();
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, locationSettingsRequestBuilder.build());
-        result.setResultCallback(mResultCallbackFromSettings);*/
 
 
     }
 
+    // The callback for the management of the user settings regarding location
+    private ResultCallback<LocationSettingsResult> mResultCallbackFromSettings = new ResultCallback<LocationSettingsResult>() {
+        @Override
+        public void onResult(LocationSettingsResult result) {
+            final Status status = result.getStatus();
+            //final LocationSettingsStates locationSettingsStates = result.getLocationSettingsStates();
+            switch (status.getStatusCode()) {
+                case LocationSettingsStatusCodes.SUCCESS:
+                    // All location settings are satisfied. The client can initialize location
+                    // requests here.
+                    GPSTracker gpsTracker=new GPSTracker(SignUpActivity.this);
+                    addFragment(gpsTracker.getLatitude(),gpsTracker.getLongitude());
+                    break;
+                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    // Location settings are not satisfied. But could be fixed by showing the user
+                    // a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        status.startResolutionForResult(
+                                SignUpActivity.this,
+                                Constant.IntentFlag.REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException e) {
+                        // Ignore the error.
+                    }
+                    break;
+                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                    Log.e("Test", "Settings change unavailable. We have no way to fix the settings so we won't show the dialog.");
+                    break;
+            }
+        }
+    };
 
-    private void addFragment(boolean isDelayed) {
 
-        mfragment = StoreInformationFragment.newInstance();
+    private void addFragment(double lat,double lon) {
+
+        mfragment = StoreInformationFragment.newInstance(lat,lon);
         getFragmentManager().beginTransaction().add(R.id.layout, mfragment).commit();
     }
 

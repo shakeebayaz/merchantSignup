@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.techjini.signuppoc.FindLocation;
-import com.example.techjini.signuppoc.GPSTracker;
 import com.example.techjini.signuppoc.GeocoderHelper;
 import com.example.techjini.signuppoc.R;
 import com.example.techjini.signuppoc.adapter.HintAdapter;
@@ -30,6 +30,8 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
     private FragmentStoreInformationBinding mBinding;
     private HintAdapter mStoreAdapter, mPartnershipAdapter;
     private boolean isDelay;
+    private double mLatitude;
+    private double mLongitude;
 
     @Nullable
     @Override
@@ -43,8 +45,7 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
             @Override
             public void run() {
                 //Do something after 100ms
-                GPSTracker gpsTracker=new GPSTracker(getActivity());
-                new GetAddress(getActivity()).execute(gpsTracker.getLatitude(),gpsTracker.getLongitude());
+                new GetAddress(getActivity()).execute(mLatitude, mLongitude);
 
             }
         }, 5000);
@@ -58,21 +59,23 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
 
     }
 
-    public static StoreInformationFragment newInstance(/*boolean isDelay*/) {
+    public static StoreInformationFragment newInstance(double lat,double lon) {
         StoreInformationFragment fragment = new StoreInformationFragment();
 
-         /* Bundle args = new Bundle();
-        args.putBoolean(Constant.BundleExtra.isDelayed,isDelay);
-        fragment.setArguments(args);*/
+          Bundle args = new Bundle();
+        args.putDouble(Constant.BundleExtra.LATITUDE,lat);
+        args.putDouble(Constant.BundleExtra.LONGITUDE,lon);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* if (getArguments() != null) {
-            isDelay = getArguments().getBoolean(Constant.BundleExtra.isDelayed);
-        }*/
+        if (getArguments() != null) {
+            mLatitude = getArguments().getDouble(Constant.BundleExtra.LATITUDE);
+            mLongitude = getArguments().getDouble(Constant.BundleExtra.LONGITUDE);
+        }
     }
 
     private void init() {

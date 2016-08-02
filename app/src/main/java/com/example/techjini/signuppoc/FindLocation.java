@@ -56,7 +56,7 @@ public class FindLocation extends Activity implements OnMapReadyCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+  
         setContentView(R.layout.find_location);
         country = new ArrayList<String>();
         placeAdapter = new PlacesAutoCompleteAdapter(this, R.layout.adapter_place_auto_complete);

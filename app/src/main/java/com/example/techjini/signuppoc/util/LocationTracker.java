@@ -67,7 +67,7 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
 
     }
 
-    private Location getLocation() {
+    public void getLastLocation() {
 
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -75,11 +75,14 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                     Constant.Permission.COARSE_LOCATION_PERMISSION_REQUEST_CODE);
 
-            return null;
+
         }
         mLastLocation = LocationServices.FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
 
+
+    }
+    public Location getLocation(){
         return mLastLocation;
     }
 
@@ -103,6 +106,7 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
                 case LocationSettingsStatusCodes.SUCCESS:
                     // All location settings are satisfied. The client can initialize location
                     // requests here.
+                    getLocation();
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                     // Location settings are not satisfied. But could be fixed by showing the user
