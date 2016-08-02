@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">SignUpPoc</string>
+    <string name="title_activity_find_address">Map</string>
+    <string name="store_name_dba">Store Name (DBA)</string>
+    <string name="legal_entity_name">Legal Entity Name</string>
+    <string name="change_store_location">Change Store Location</string>
+    <string name="next">Next</string>
+    <string name="store_category"><![CDATA[Store Category & Tags]]></string>
+    <string name="partnership">Partnership</string>
+    <string name="current_account">Current Account</string>
+    <string name="saving_account">Saving Account</string>
+    <string name="legal_entity_name_shall_be_used_as_beneficiary">Legal Entity Name shall be used as beneficiary</string>
+    <string name="ifsc_code">IFSC Code</string>
+    <string name="branch_name">Branch Name</string>
+    <string name="bank_name">Bank Name</string>
+    <string name="account_number">Account Number</string>
+    <string name="primary_contact_ph_no">Primary Contact Ph No.</string>
+    <string name="primary_contact_email_id">Primary Contact Email Id</string>
+    <string name="primary_contact_designation">Primary Contact Designation</string>
+
+</resources>
