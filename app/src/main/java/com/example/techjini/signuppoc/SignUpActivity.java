@@ -1,20 +1,13 @@
 package com.example.techjini.signuppoc;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.provider.Settings;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.techjini.signuppoc.fragment.StoreInformationFragment;
@@ -22,7 +15,6 @@ import com.example.techjini.signuppoc.util.Constant;
 import com.example.techjini.signuppoc.util.LocationTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -34,13 +26,6 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 public class SignUpActivity extends AppCompatActivity {
-    public static final int LOCATION_REQUEST = 400;
-    private String mAddress;
-    private double mLongitude;
-    private double mLatitude;
-    private EditText mEmailEdit;
-    private boolean isPrimarySelected;
-    private String primaryEmail;
     private StoreInformationFragment mfragment;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
@@ -60,12 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case LOCATION_REQUEST:
 
-                mLatitude = data.getDoubleExtra("LATITUDE", 0);
-                mLongitude = data.getDoubleExtra("LONGITUDE", 0);
-                mAddress = data.getStringExtra("Address");
-                break;
             case Constant.IntentFlag.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode == Activity.RESULT_OK) {
                     mLocationRequest = new LocationRequest();
@@ -81,7 +61,7 @@ public class SignUpActivity extends AppCompatActivity {
             case Constant.IntentFlag.REQUEST_CHECK_SETTINGS:
                 if (resultCode == Activity.RESULT_OK) {
                     GPSTracker gpsTracker=new GPSTracker(this);
-                    addFragment(gpsTracker.getLatitude(),gpsTracker.getLongitude());
+                    addFragment(gpsTracker.getLatitude(),gpsTracker.getLongitude(),true);
                 } else finish();
                 break;
         }
@@ -117,33 +97,6 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    private void showDialogToSettings() {
-        // Build the alert dialog
-       /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Location Services Not Active");
-        builder.setMessage("Please enable Location Services and GPS");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
-            }
-        });
-
-        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                finish();
-            }
-        });
-
-        Dialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.show();*/
-        // Check the location settings of the user and create the callback to react to the different possibilities
-
-
-    }
 
     // The callback for the management of the user settings regarding location
     private ResultCallback<LocationSettingsResult> mResultCallbackFromSettings = new ResultCallback<LocationSettingsResult>() {
@@ -156,7 +109,7 @@ public class SignUpActivity extends AppCompatActivity {
                     // All location settings are satisfied. The client can initialize location
                     // requests here.
                     GPSTracker gpsTracker=new GPSTracker(SignUpActivity.this);
-                    addFragment(gpsTracker.getLatitude(),gpsTracker.getLongitude());
+                    addFragment(gpsTracker.getLatitude(),gpsTracker.getLongitude(),false);
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                     // Location settings are not satisfied. But could be fixed by showing the user
@@ -179,10 +132,11 @@ public class SignUpActivity extends AppCompatActivity {
     };
 
 
-    private void addFragment(double lat,double lon) {
+    private void addFragment(double lat,double lon,boolean isDelayed) {
 
-        mfragment = StoreInformationFragment.newInstance(lat,lon);
+        mfragment = StoreInformationFragment.newInstance(lat,lon,isDelayed);
         getFragmentManager().beginTransaction().add(R.id.layout, mfragment).commit();
     }
+
 
 }

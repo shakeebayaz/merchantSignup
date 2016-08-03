@@ -5,6 +5,7 @@ package com.example.techjini.signuppoc.util;
  */
 public class Constant {
 
+
     public interface BundleExtra {
 String isDelayed="isDelayed";
         String LATITUDE = "latitude";

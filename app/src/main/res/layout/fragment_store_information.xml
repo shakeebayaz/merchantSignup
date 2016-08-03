@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<data>
-    <variable
-        name="handler"
-        type="android.view.View.OnClickListener"/>
-</data>
+
+    <data>
+
+        <variable
+            name="handler"
+            type="android.view.View.OnClickListener" />
+    </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@android:color/white"
         android:layout_height="match_parent"
+        android:background="@android:color/white"
         android:orientation="vertical">
 
 
         <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/next_btn"
+            android:layout_alignParentTop="true"
             android:layout_marginTop="@dimen/dp_12"
             android:fillViewport="true"
-            android:layout_alignParentTop="true"
-            android:layout_above="@+id/next_btn"
-         android:id="@+id/scrollView"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -43,8 +46,8 @@
                         android:id="@+id/store_name_edt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                         android:singleLine="true"
-                        android:drawableRight="@drawable/ic_setting_dark" />
+                        android:drawableRight="@drawable/ic_setting_dark"
+                        android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -84,20 +87,19 @@
                             android:id="@+id/owner_name_edt"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-
-
-                            />
+                            android:inputType="textPersonName"
+                            android:singleLine="true" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.v7.widget.AppCompatSpinner
                         android:id="@+id/partnership_spinner"
+                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_alignParentRight="true"
                         android:layout_marginLeft="@dimen/dp_12"
                         android:layout_marginRight="@dimen/dp_12"
-                        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
 
                 </LinearLayout>
 
@@ -135,16 +137,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:onClick="@{handler.onClick}"
-                    android:clickable="true"
                     android:layout_marginRight="@dimen/dp_12"
+                    android:clickable="true"
+                    android:onClick="@{handler.onClick}"
                     android:text="@string/change_store_location" />
 
                 <Spinner
                     android:id="@+id/store_category_spinner"
+                    style="@style/Base.Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_40"
-                    style="@style/Base.Widget.AppCompat.Spinner.Underlined"
                     android:layout_marginLeft="@dimen/dp_12"
                     android:layout_marginRight="@dimen/dp_12"
                     android:layout_marginTop="@dimen/dp_12">
@@ -157,23 +159,24 @@
         </ScrollView>
 
         <Button
+            android:id="@+id/next_btn"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_50"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_40"
             android:layout_marginLeft="@dimen/dp_12"
             android:layout_marginRight="@dimen/dp_12"
             android:layout_marginTop="@dimen/dp_12"
             android:background="@android:color/darker_gray"
-            android:text="@string/next"
-            android:id="@+id/next_btn"
             android:onClick="@{handler.onClick}"
-            android:layout_marginBottom="@dimen/dp_40"
+            android:text="@string/next"
             android:textColor="@android:color/white" />
-<ProgressBar
-    android:layout_width="wrap_content"
-    android:id="@+id/progressbar"
-    android:layout_centerInParent="true"
-    android:layout_height="wrap_content" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 </layout>

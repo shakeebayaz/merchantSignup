@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.techjini.signuppoc.FindLocation;
+import com.example.techjini.signuppoc.GPSTracker;
 import com.example.techjini.signuppoc.GeocoderHelper;
 import com.example.techjini.signuppoc.R;
+import com.example.techjini.signuppoc.SignUpActivity;
 import com.example.techjini.signuppoc.adapter.HintAdapter;
 import com.example.techjini.signuppoc.databinding.FragmentStoreInformationBinding;
 import com.example.techjini.signuppoc.util.Constant;
@@ -40,31 +42,34 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
         mBinding.progressbar.bringToFront();
         init();
         final Handler handler = new Handler();
-    //    if(isDelay)
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after 100ms
-                new GetAddress(getActivity()).execute(mLatitude, mLongitude);
+        if (isDelay)
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //Do something after 100ms
+                    GPSTracker gpsTracker = new GPSTracker(getActivity());
+                    new GetAddress(getActivity()).execute(gpsTracker.getLatitude(), gpsTracker.getLongitude());
 
-            }
-        }, 5000);
-       /* else {
-            GPSTracker gpsTracker=new GPSTracker(getActivity());
-            new GetAddress(getActivity()).execute(gpsTracker.getLatitude(),gpsTracker.getLongitude());
+                }
+            }, 5000);
+        else {
+
+            new GetAddress(getActivity()).execute(mLatitude, mLongitude);
             mBinding.progressbar.setVisibility(View.GONE);
-        }*/
+        }
+
         return mBinding.getRoot();
 
 
     }
 
-    public static StoreInformationFragment newInstance(double lat,double lon) {
+    public static StoreInformationFragment newInstance(double lat, double lon, boolean isDelay) {
         StoreInformationFragment fragment = new StoreInformationFragment();
 
-          Bundle args = new Bundle();
-        args.putDouble(Constant.BundleExtra.LATITUDE,lat);
-        args.putDouble(Constant.BundleExtra.LONGITUDE,lon);
+        Bundle args = new Bundle();
+        args.putDouble(Constant.BundleExtra.LATITUDE, lat);
+        args.putDouble(Constant.BundleExtra.LONGITUDE, lon);
+        args.putBoolean(Constant.BundleExtra.isDelayed, isDelay);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,6 +80,7 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
         if (getArguments() != null) {
             mLatitude = getArguments().getDouble(Constant.BundleExtra.LATITUDE);
             mLongitude = getArguments().getDouble(Constant.BundleExtra.LONGITUDE);
+            isDelay = getArguments().getBoolean(Constant.BundleExtra.isDelayed, false);
         }
     }
 
@@ -113,10 +119,11 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.next_btn)
+        if (v.getId() == R.id.next_btn) {
             addFragment();
-        else
-            startActivityForResult(new Intent(getActivity(), FindLocation.class), Constant.IntentFlag.LOCATION_REQUEST); ;
+        } else
+            startActivityForResult(new Intent(getActivity(), FindLocation.class), Constant.IntentFlag.LOCATION_REQUEST);
+        ;
     }
 
     public void addFragment() {
@@ -136,6 +143,7 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
             mBinding.storeLocationEdt.setText(mAddress);
         }
     }
+
     private class GetAddress extends AsyncTask<Double, Void, String> {
         private final Context mContext;
         GeocoderHelper geo;
@@ -152,7 +160,7 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
         @Override
         protected String doInBackground(Double... params) {
 
-            geo = new GeocoderHelper(mContext,params[0], params[1]);
+            geo = new GeocoderHelper(mContext, params[0], params[1]);
 
             return geo.fetchCityName();
         }
