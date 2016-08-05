@@ -17,5 +17,6 @@
     <string name="primary_contact_ph_no">Primary Contact Ph No.</string>
     <string name="primary_contact_email_id">Primary Contact Email Id</string>
     <string name="primary_contact_designation">Primary Contact Designation</string>
+    <string name="enter_valid_phone">Enter Valid Phone Number</string>
 
 </resources>

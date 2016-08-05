@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.techjini.signuppoc.R;
 import com.example.techjini.signuppoc.databinding.FragmentContactInfoContainerBinding;
+import com.example.techjini.signuppoc.util.Utility;
 
 /**
  * Created by Shakeeb on 27/7/16.
@@ -38,6 +39,7 @@ public class ContactInfoFragment extends Fragment implements View.OnClickListene
         mBinding.setHandler(this);
         mBinding.primaryEmailEdt.setText(getPrimaryEmail());
     }
+
     public String getPrimaryPhoneNo() {
         TelephonyManager tMgr = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
@@ -62,9 +64,18 @@ public class ContactInfoFragment extends Fragment implements View.OnClickListene
         return null;
     }
 
+    private boolean validatePhoneNo() {
+        if (!Utility.isPhoneNoValid(mBinding.primaryPhoneNoEdt.getText().toString())) {
+            mBinding.primaryPhoneNoWrapper.setErrorEnabled(true);
+            mBinding.primaryPhoneNoWrapper.setError(getResources().getString(R.string.enter_valid_phone));
+            return false;
+        }
+        return true;
+    }
+
     private String getPrimaryEmail() {
         Account[] accounts = AccountManager.get(getActivity()).getAccounts();
-        String primaryEmail=null;
+        String primaryEmail = null;
         if (accounts != null && accounts.length > 0) {
             for (Account account : accounts) {
                 if (account.type.equals("com.google")) {
@@ -77,6 +88,7 @@ public class ContactInfoFragment extends Fragment implements View.OnClickListene
         }
         return null;
     }
+
     public static ContactInfoFragment newInstance() {
 
         ContactInfoFragment fragment = new ContactInfoFragment();
@@ -89,6 +101,7 @@ public class ContactInfoFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         Log.e("test", "Clicked");
+        if(validatePhoneNo())
         addFragment();
     }
 

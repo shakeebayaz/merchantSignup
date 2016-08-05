@@ -1,7 +1,9 @@
 package com.example.techjini.signuppoc.util;
 
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Base64;
+import android.widget.EditText;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -19,5 +21,13 @@ public class Utility {
         byte[] byteFormat = stream.toByteArray();
         String imgString = Base64.encodeToString(byteFormat, Base64.NO_WRAP);
         return imgString;
+    }
+
+    public static boolean isPhoneNoValid(String phoneNo) {
+        if (!TextUtils.isEmpty(phoneNo) && phoneNo.matches(Constant.Validation.PHONE_VALIDATION)) {
+            return true;
+        }
+
+        return false;
     }
 }

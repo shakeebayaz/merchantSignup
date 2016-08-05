@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import com.example.techjini.signuppoc.SignUpActivity;
 import com.example.techjini.signuppoc.adapter.HintAdapter;
 import com.example.techjini.signuppoc.databinding.FragmentStoreInformationBinding;
 import com.example.techjini.signuppoc.util.Constant;
+import com.example.techjini.signuppoc.util.LocationTracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +37,14 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
     private boolean isDelay;
     private double mLatitude;
     private double mLongitude;
+    private LocationTracker mLoctionTracker;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_store_information, container, false);
         mBinding.progressbar.bringToFront();
+        mLoctionTracker=new LocationTracker(getActivity());
         init();
         final Handler handler = new Handler();
         if (isDelay)
@@ -50,9 +55,12 @@ public class StoreInformationFragment extends Fragment implements View.OnClickLi
                     GPSTracker gpsTracker = new GPSTracker(getActivity());
                     new GetAddress(getActivity()).execute(gpsTracker.getLatitude(), gpsTracker.getLongitude());
 
+                    Log.d("test", "run: "+mLoctionTracker.getLocation());
+
                 }
             }, 5000);
         else {
+            Log.d("test", "run: "+mLoctionTracker.getLocation());
 
             new GetAddress(getActivity()).execute(mLatitude, mLongitude);
             mBinding.progressbar.setVisibility(View.GONE);

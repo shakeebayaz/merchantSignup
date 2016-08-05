@@ -45,8 +45,7 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
         PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
         result.setResultCallback(mResultCallbackFromSettings);
-
-
+        getLastLocation();
     }
 
     public LocationTracker(Context context) {
@@ -82,7 +81,8 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
 
 
     }
-    public Location getLocation(){
+
+    public Location getLocation() {
         return mLastLocation;
     }
 
